@@ -26,10 +26,14 @@ const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta'
 
 export function getSettings() {
   const saved = load('settings', null)
-  if (saved) return saved // the user's own choice always wins
-  if (ENV_GEMINI_KEY) {
-    return { provider: 'gemini', apiKey: ENV_GEMINI_KEY, model: ENV_GEMINI_MODEL, baseUrl: GEMINI_BASE }
+  // When a build-time Gemini key exists (static deploy), use it whenever the user
+  // hasn't supplied their own key — Free AI can't run on static hosting, so this
+  // also rescues returning visitors whose saved setting is the keyless Free AI.
+  if (ENV_GEMINI_KEY && (!saved || saved.provider === 'free' || !saved.apiKey)) {
+    const model = saved?.model && /gemini/i.test(saved.model) ? saved.model : ENV_GEMINI_MODEL
+    return { provider: 'gemini', apiKey: ENV_GEMINI_KEY, model, baseUrl: GEMINI_BASE }
   }
+  if (saved) return saved // the user's own key/provider always wins
   return { provider: 'free', apiKey: '', model: 'gemini-2.5-flash', baseUrl: GEMINI_BASE }
 }
 

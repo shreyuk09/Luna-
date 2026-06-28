@@ -26,3 +26,6 @@ Icon?
 
 # Accidental nested clone
 Luna-/
+
+# Local-only baked key (use GitHub secret for deploy)
+.env.production
