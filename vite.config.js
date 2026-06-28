@@ -121,6 +121,9 @@ function aiProxyPlugin() {
 }
 
 export default defineConfig({
+  // Relative asset paths so the build works under any subpath, e.g. GitHub
+  // Pages at https://<user>.github.io/<repo>/ — without this the page is blank.
+  base: './',
   plugins: [react(), aiProxyPlugin()],
   // Pre-bundle these at server start so the first page load doesn't hit a
   // mid-optimization reload (the brief blank/404 some setups see on cold start).

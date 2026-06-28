@@ -23,3 +23,6 @@ Icon?
 
 # Vite cache
 .vite/
+
+# Accidental nested clone
+Luna-/
