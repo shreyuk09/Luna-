@@ -530,20 +530,17 @@ export function StoreProvider({ children }) {
     const chat = getChat(chatId)
     const topic = chat?.topics.find((t) => t.id === topicId)
     if (!topic) return
-    const snapshot = JSON.parse(JSON.stringify({ topics: chat.topics, messages: chat.messages }))
+    const snapshot = JSON.parse(JSON.stringify({ topics: chat.topics, messages: chat.messages, topicOrder: chat.topicOrder || [] }))
 
     patchChat(chatId, (c) => {
-      // messages fall back to an "Unsorted" group — never orphaned
-      let topics = c.topics.filter((t) => t.id !== topicId)
-      let unsorted = topics.find((t) => t.title === 'Unsorted')
-      if (!unsorted) {
-        unsorted = { id: uid('top_'), title: 'Unsorted', summary: '', color: 'slate', messageIds: [], locked: true }
-        topics.push(unsorted)
-      }
-      const movedIds = topic.messageIds
-      topics = topics.map((t) => (t.id === unsorted.id ? { ...t, messageIds: Array.from(new Set([...t.messageIds, ...movedIds])), locked: true } : t))
-      const messages = c.messages.map((m) => (movedIds.includes(m.id) ? { ...m, topicId: unsorted.id } : m))
-      return { ...c, topics, messages }
+      // The topic card is removed from the index. Its messages stay in the
+      // conversation but become ungrouped (topicId: null) — no "Unsorted" bucket,
+      // so the topic visibly disappears.
+      const topics = c.topics.filter((t) => t.id !== topicId)
+      const gone = new Set(topic.messageIds)
+      const messages = c.messages.map((m) => (gone.has(m.id) ? { ...m, topicId: null } : m))
+      const topicOrder = (c.topicOrder || []).filter((id) => id !== topicId)
+      return { ...c, topics, messages, topicOrder }
     })
 
     toast(`Topic "${topic.title}" deleted`, {

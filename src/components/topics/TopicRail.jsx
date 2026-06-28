@@ -114,7 +114,7 @@ export default function TopicRail({ onNavigate }) {
 
 function maybeDelete(topic, chat, actions) {
   if (topic.messageIds.length > 2) {
-    if (!window.confirm(`Delete "${topic.title}"? Its ${topic.messageIds.length} messages will move to Unsorted.`)) return
+    if (!window.confirm(`Delete the "${topic.title}" topic? Its ${topic.messageIds.length} messages stay in the chat but are removed from the index.`)) return
   }
   actions.deleteTopic(chat.id, topic.id)
 }

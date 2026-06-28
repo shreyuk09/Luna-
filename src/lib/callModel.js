@@ -15,13 +15,22 @@
 import { load, save } from './storage.js'
 import { analyzeIntent, wikiAnswer, calcExpression, resolveEntity, lastEntityFrom, getWeather, webSearch } from './knowledge.js'
 
+// Optional build-time Gemini key (set VITE_GEMINI_API_KEY at build, e.g. via a
+// GitHub Actions secret). When present, the app defaults to Gemini so a static
+// deploy (GitHub Pages) works without each visitor entering their own key.
+// NOTE: any key shipped to the browser is publicly visible in the bundle — use a
+// restricted/low-quota key, or a backend proxy, for anything sensitive.
+const ENV_GEMINI_KEY = (import.meta.env?.VITE_GEMINI_API_KEY || '').trim()
+const ENV_GEMINI_MODEL = (import.meta.env?.VITE_GEMINI_MODEL || 'gemini-2.0-flash').trim()
+const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta'
+
 export function getSettings() {
-  return load('settings', {
-    provider: 'free', // 'free' (no-key AI) | 'mock' (offline) | 'gemini' (your key)
-    apiKey: '',
-    model: 'gemini-2.0-flash',
-    baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-  })
+  const saved = load('settings', null)
+  if (saved) return saved // the user's own choice always wins
+  if (ENV_GEMINI_KEY) {
+    return { provider: 'gemini', apiKey: ENV_GEMINI_KEY, model: ENV_GEMINI_MODEL, baseUrl: GEMINI_BASE }
+  }
+  return { provider: 'free', apiKey: '', model: 'gemini-2.0-flash', baseUrl: GEMINI_BASE }
 }
 
 export function hasLiveModel() {

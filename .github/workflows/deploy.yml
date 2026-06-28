@@ -25,6 +25,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          # Optional: add a repo secret named GEMINI_API_KEY to ship a default
+          # Gemini key so the deployed site works without visitors entering one.
+          VITE_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
