@@ -21,7 +21,7 @@ import { analyzeIntent, wikiAnswer, calcExpression, resolveEntity, lastEntityFro
 // NOTE: any key shipped to the browser is publicly visible in the bundle — use a
 // restricted/low-quota key, or a backend proxy, for anything sensitive.
 const ENV_GEMINI_KEY = (import.meta.env?.VITE_GEMINI_API_KEY || '').trim()
-const ENV_GEMINI_MODEL = (import.meta.env?.VITE_GEMINI_MODEL || 'gemini-2.0-flash').trim()
+const ENV_GEMINI_MODEL = (import.meta.env?.VITE_GEMINI_MODEL || 'gemini-2.5-flash').trim()
 const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta'
 
 export function getSettings() {
@@ -30,7 +30,7 @@ export function getSettings() {
   if (ENV_GEMINI_KEY) {
     return { provider: 'gemini', apiKey: ENV_GEMINI_KEY, model: ENV_GEMINI_MODEL, baseUrl: GEMINI_BASE }
   }
-  return { provider: 'free', apiKey: '', model: 'gemini-2.0-flash', baseUrl: GEMINI_BASE }
+  return { provider: 'free', apiKey: '', model: 'gemini-2.5-flash', baseUrl: GEMINI_BASE }
 }
 
 export function hasLiveModel() {
@@ -116,7 +116,7 @@ function geminiParts(m) {
 
 async function callGemini(s, system, messages, signal, onToken) {
   const key = (s.apiKey || '').trim()
-  const model = (s.model || 'gemini-2.0-flash').trim().replace(/^models\//, '')
+  const model = (s.model || 'gemini-2.5-flash').trim().replace(/^models\//, '')
   const base = (s.baseUrl || 'https://generativelanguage.googleapis.com/v1beta').replace(/\/+$/, '')
   const contents = messages
     .map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: geminiParts(m) }))

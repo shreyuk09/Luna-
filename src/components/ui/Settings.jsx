@@ -33,7 +33,7 @@ export default function Settings() {
                 <button key={p.id} onClick={() => setS((prev) => {
                   const next = { ...prev, provider: p.id }
                   if (p.id === 'gemini') {
-                    if (!/gemini/i.test(prev.model || '')) next.model = 'gemini-2.0-flash'
+                    if (!/gemini/i.test(prev.model || '')) next.model = 'gemini-2.5-flash'
                     if (!/generativelanguage/i.test(prev.baseUrl || '')) next.baseUrl = 'https://generativelanguage.googleapis.com/v1beta'
                   }
                   if (p.id === 'custom') {
@@ -66,8 +66,8 @@ export default function Settings() {
               </div>
               <div>
                 <label className="block mb-1 font-medium">Model</label>
-                <input className={field} value={s.model} onChange={(e) => setS({ ...s, model: e.target.value })} placeholder="gemini-2.0-flash" />
-                <p className="mt-1 text-xs text-ink2">e.g. <code>gemini-2.0-flash</code> (fast, free tier) or <code>gemini-2.5-pro</code>.</p>
+                <input className={field} value={s.model} onChange={(e) => setS({ ...s, model: e.target.value })} placeholder="gemini-2.5-flash" />
+                <p className="mt-1 text-xs text-ink2">e.g. <code>gemini-2.5-flash</code> (fast, free tier) or <code>gemini-2.5-pro</code>.</p>
               </div>
             </>
           )}
